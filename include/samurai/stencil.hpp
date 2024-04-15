@@ -1,6 +1,11 @@
 #pragma once
 #include "indices.hpp"
 #include "static_algorithm.hpp"
+#include <fmt/format.h>
+
+#ifdef SAMURAI_WITH_MPI
+#include <boost/mpi.hpp>
+#endif
 
 namespace samurai
 {
@@ -493,8 +498,14 @@ namespace samurai
             origin_cell.index = get_index_start(m_mesh, mesh_interval);
             if (origin_cell.index > 0 && static_cast<std::size_t>(origin_cell.index) > m_mesh.nb_cells())
             {
+#ifdef SAMURAI_WITH_MPI
+                boost::mpi::communicator world;
+                std::cout << fmt::format("Cell not found in the mesh (Process {}):", world.rank()) << ", cell : " << origin_cell << std::endl;
+                world.abort( 28 );
+#else
                 std::cout << "Cell not found in the mesh: " << origin_cell << std::endl;
                 assert(false);
+#endif
             }
 
             for (unsigned int id = 0; id < stencil_size; ++id)
