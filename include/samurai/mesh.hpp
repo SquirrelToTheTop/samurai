@@ -257,7 +257,6 @@ namespace samurai
         update_sub_mesh();
         renumbering();
         update_mesh_neighbour();
-        update_mesh_neighbour();
     }
 
     template <class D, class Config>
